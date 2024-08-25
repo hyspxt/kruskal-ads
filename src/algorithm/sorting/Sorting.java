@@ -110,8 +110,44 @@ public class Sorting {
 	 * @param <T> class of the object in the array
 	 */
 	public static <T extends Comparable<T>> void quicksort(T A[]) {
-
+		quick_sort(A, 0, A.length - 1);
 	}
+
+	public static <T extends Comparable<T>> void quick_sort(T A[], int l, int r) {
+        if (l < r) {
+            // Partition the array and get the pivot index
+            int pivotIndex = partition(A, l, r);
+
+            // Recursively sort elements before and after the partition
+            quick_sort(A, l, pivotIndex - 1);
+            quick_sort(A, pivotIndex + 1, r);
+        }
+	}	
+
+	private static <T extends Comparable<T>> int partition(T A[], int low, int high) {
+        // Use the last element as the pivot
+        T pivot = A[high];
+
+        // Index of the smaller element
+        int i = low - 1;
+
+        // Traverse the array and partition it based on the pivot
+        for (int j = low; j < high; j++) {
+            // If current element is smaller than or equal to pivot
+            if (A[j].compareTo(pivot) <= 0) {
+                i++;
+
+                // Swap A[i] and A[j]
+                swap(A, i, j);
+            }
+        }
+
+        // Swap the pivot element with the element at i + 1
+        swap(A, i + 1, high);
+
+        // Return the partition point
+        return i + 1;
+    }
 
 	/**
 	 * Sorts the specified array into ascending numerical order in O(n<sup>2</sup>) and O(nlogn) on the average
@@ -137,7 +173,23 @@ public class Sorting {
 	 * @param A the array to be sorted
 	 */
 	public static void countingsort(int A[]) {
+		if (A.length == 0) 
+			return;
+		int min = A[0], max = A[0];
+		for (int i = 1; i < A.length; i++) {
+			if (A[i] < min) min = A[i];
+			if (A[i] > max) max = A[i];
+		}
+		int range = max - min + 1;
+		int[] count = new int[range];
+		for (int i = 0; i < A.length; i++)
+			count[A[i] - min]++;
 
+		int index = 0;
+		for (int i = 1; i < range; i++){
+			A[index++] = i + min;
+			count[i]--;
+		}
 	}
 
 	/**
