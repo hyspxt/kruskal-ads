@@ -14,8 +14,6 @@ public class Sorting {
 	 * 		  counting around 0.002 - 0.005 
 	 * 		  quick around 0.002 - 0.009
 	 * 		  heap around < 0.002 (!) <- stabler on larger graph
-	 * quick sort is the fastest one in general, but has some 
-	 * really severe spikes in time, so heap is preferred
 	 */
 
 	private static <D> void swap(ArrayList<WeightedEdge<D>> A, int i, int j) {
@@ -161,8 +159,7 @@ public class Sorting {
 
     private static <D> int partition(ArrayList<WeightedEdge<D>> A, int low, int high) {
         /* last element of the sublist */
-		int pivotIndex = low + (int) (Math.random() * (high - low + 1));
-		WeightedEdge<D> pivot = A.get(pivotIndex);
+		WeightedEdge<D> pivot = A.get(high);
 		/* index of the smaller element in the sublist */
         int i = low - 1; 
         for (int j = low; j < high; j++) { /* check pivot weight and current element weight */

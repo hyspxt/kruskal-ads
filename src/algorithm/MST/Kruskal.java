@@ -28,52 +28,53 @@ public class Kruskal<D> implements MST<D> {
 	 */
 	public void compute(WeightedGraph<D> g) {
 		/* init ds and MST graph */
-        QuickUnionRank<D> unionFind = new QuickUnionRank<>();
-        this.t = new WeightedGraphAL<>(); /* MST */
-        this.weight = 0;
+		QuickUnionRank<D> unionFind = new QuickUnionRank<>();
+		this.t = new WeightedGraphAL<>(); /* MST */
+		this.weight = 0;
 
-        /* ds to store the union-find nodes and vertex */
-        ArrayList<QUnode<D>> ufNodes = new ArrayList<>(g.vertexNum());
-        HashMap<D, QUnode<D>> nodeMap = new HashMap<>(); /* node mapping */
-        HashMap<D, Vertex<D>> vertexMap = new HashMap<>(); /* vertex mapping */
+		/* ds to save unionFind both nodes and vertexes */
+		ArrayList<QUnode<D>> ufNodes = new ArrayList<>(g.vertexNum());
+		HashMap<D, QUnode<D>> nodeMap = new HashMap<>(); /* nodes */
+		HashMap<D, Vertex<D>> vertexMap = new HashMap<>(); /* vertexes in MST */
 
-        // Step 3: Add vertices to the MST graph and union-find structure
-        for (Vertex<D> v : g.vertexes()) {
-            Vertex<D> mstVertex = t.addVertex(v.data); // Add vertex to the MST graph
-            vertexMap.put(v.data, mstVertex); // Store vertex in the map for future reference
+		/* for each vertex, we add it in the MST graph and store it in the HashMap
+		 * for further evaluation through the edges. */
+		for (Vertex<D> v : g.vertexes()) {
+			Vertex<D> mstVertex = t.addVertex(v.data);
+			vertexMap.put(v.data, mstVertex);
+			/* We also create a disjoint-set node for each vertex and store it 
+			 * in the UnionFind and in the HashMap for source and destination nodes. */
+			QUnode<D> ufNode = unionFind.makeSet(v.data);
+			ufNodes.add(ufNode);
+			nodeMap.put(v.data, ufNode);
+		}
 
-            QUnode<D> ufNode = unionFind.makeSet(v.data); // Create a disjoint-set node
-            ufNodes.add(ufNode); // Add the node to the list
-            nodeMap.put(v.data, ufNode); // Store node in map for easy access
-        }
+		/* collect all weighted edges in an ArrayList */
+		ArrayList<WeightedEdge<D>> edges = new ArrayList<>(g.edgeNum());
+		for (Edge<D> e : g.edges()) /* then, sort them by weight with sorting algorithm (heapsort) */
+			edges.add((WeightedEdge<D>) e);
+		Sorting.heapsort(edges);
 
-        // Step 4: Collect and sort all edges by their weight
-        ArrayList<WeightedEdge<D>> edges = new ArrayList<>(g.edgeNum());
-        for (Edge<D> e : g.edges()) {
-            edges.add((WeightedEdge<D>) e);
-        }
-        Sorting.quicksort(edges); // Sort edges by weight
+		/* check iteratively weighted edges to build the MST */
+		for (WeightedEdge<D> edge : edges) {
+			QUset setSource = unionFind.find(nodeMap.get(edge.source.data)); /* source node */
+			QUset setDest = unionFind.find(nodeMap.get(edge.dest.data)); /* dest node */
 
-        // Step 5: Iterate through the sorted edges and construct the MST
-        for (WeightedEdge<D> edge : edges) {
-            // Find the disjoint sets (or components) of the source and destination vertices
-            QUset setSource = unionFind.find(nodeMap.get(edge.source.data)); // Get the source node
-            QUset setDest = unionFind.find(nodeMap.get(edge.dest.data)); // Get the destination node
-
-            // If the vertices are in different sets, include this edge in the MST
-            if (setSource != setDest) {
-                // Add the edge to the MST graph (both directions)
-                t.addEdge(new WeightedEdge<>(vertexMap.get(edge.source.data), vertexMap.get(edge.dest.data), edge.weight));
-                t.addEdge(new WeightedEdge<>(vertexMap.get(edge.dest.data), vertexMap.get(edge.source.data), edge.weight));
-
-                // Union the sets
-                unionFind.union(setSource, setDest);
-
-                // Update the total weight of the MST
-                this.weight += edge.weight;
-            }
-        }
-	}	
+			if (setSource != setDest) { /* src and dest are in different sets */
+				/* then, this edge should be added to the MST graph */
+				t.addEdge(new WeightedEdge<>(vertexMap.get(edge.source.data), vertexMap.get(edge.dest.data),
+						edge.weight));
+				
+				/* --- edit: this is not necessary, as the graph is undirected --- 
+				t.addEdge(new WeightedEdge<>(vertexMap.get(edge.dest.data), vertexMap.get(edge.source.data),
+				 		edge.weight)); */
+				/* perform a union on those sets */
+				unionFind.union(setSource, setDest);
+				/* update the total weight of the MST */
+				this.weight += edge.weight;
+			}
+		}
+	}
 
 	/**
 	 * Returns the Minimum Spanning Tree (MST) of the weighted graph.
