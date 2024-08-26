@@ -20,8 +20,7 @@ public class QuickUnionRank<D> extends QuickUnion<D> {
 
 	public QUnode<D> makeSet(D d) {
 		QURset s = new QURset();
-		QUnode<D> n = new QUnode<D>(d, s);
-		return n;
+		return new QUnode<D>(d, s);
 	}
 
 	public void union(QUset s, QUset t) {

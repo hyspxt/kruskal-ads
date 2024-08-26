@@ -34,7 +34,6 @@ public class Kruskal<D> implements MST<D> {
 		this.weight = 0;
 
 		/* ds to save unionFind both nodes and vertexes */
-		ArrayList<QUnode<D>> ufNodes = new ArrayList<>(g.vertexNum());
 		ArrayList<WeightedEdge<D>> edges = new ArrayList<>(g.edgeNum());
 		HashMap<D, QUnode<D>> nodeMap = new HashMap<>(); /* nodes */
 		HashMap<D, Vertex<D>> vertexMap = new HashMap<>(); /* vertexes in MST */
@@ -47,7 +46,6 @@ public class Kruskal<D> implements MST<D> {
 			/* We also create a disjoint-set node for each vertex and store it 
 			 * in the UnionFind and in the HashMap for source and destination nodes. */
 			QUnode<D> ufNode = unionFind.makeSet(v.data);
-			ufNodes.add(ufNode);
 			nodeMap.put(v.data, ufNode);
 		}
 

@@ -23,8 +23,7 @@ public class QuickUnion<D> implements UnionFind<D, QUnode<D>, QUset> {
 
 	public QUnode<D> makeSet(D d) {
 		QUset s = new QUset();
-		QUnode<D> n = new QUnode<D>(d, s);
-		return n;
+		return new QUnode<D>(d, s);
 	}
 
 	public void union(QUset s, QUset t) {
