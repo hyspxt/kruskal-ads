@@ -25,8 +25,8 @@ public class QuickUnionRank<D> extends QuickUnion<D> {
 	}
 
 	public void union(QUset s, QUset t) {
-		if (s == t)
-			return;
+		if (s == t) 
+			return; /* sets are equal -> finish the recursion */
 		if (((QURset) s).rank == ((QURset) t).rank) {
 			super.union(s, t);
 			((QURset) s).rank++;

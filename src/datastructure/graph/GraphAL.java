@@ -115,8 +115,8 @@ public class GraphAL<D> implements Graph<D> {
 	public void removeEdge(Edge<D> e) {
 		VertexAL<D> v = (VertexAL<D>)e.source;
 		if(v.adjac.contains(e)) {
-			v.adjac.remove(e);
 			m--;
+			v.adjac.remove(e);
 		}
 	}
 

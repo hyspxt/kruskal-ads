@@ -27,13 +27,15 @@ public class Kruskal<D> implements MST<D> {
 	 * @param g the weighted graph
 	 */
 	public void compute(WeightedGraph<D> g) {
-		/* init ds and MST graph */
+		/* init ds and MST graph, QURank definetely the best
+		 * with a large number of unions (4example in larger graphs) */
 		QuickUnionRank<D> unionFind = new QuickUnionRank<>();
 		this.t = new WeightedGraphAL<>(); /* MST */
 		this.weight = 0;
 
 		/* ds to save unionFind both nodes and vertexes */
 		ArrayList<QUnode<D>> ufNodes = new ArrayList<>(g.vertexNum());
+		ArrayList<WeightedEdge<D>> edges = new ArrayList<>(g.edgeNum());
 		HashMap<D, QUnode<D>> nodeMap = new HashMap<>(); /* nodes */
 		HashMap<D, Vertex<D>> vertexMap = new HashMap<>(); /* vertexes in MST */
 
@@ -49,8 +51,7 @@ public class Kruskal<D> implements MST<D> {
 			nodeMap.put(v.data, ufNode);
 		}
 
-		/* collect all weighted edges in an ArrayList */
-		ArrayList<WeightedEdge<D>> edges = new ArrayList<>(g.edgeNum());
+		/* collect all weighted edges in the ArrayList */
 		for (Edge<D> e : g.edges()) /* then, sort them by weight with sorting algorithm (heapsort) */
 			edges.add((WeightedEdge<D>) e);
 		Sorting.heapsort(edges);

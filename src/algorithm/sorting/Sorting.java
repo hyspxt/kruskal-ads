@@ -14,8 +14,11 @@ public class Sorting {
 	 * 		  counting around 0.002 - 0.005 
 	 * 		  quick around 0.002 - 0.009
 	 * 		  heap around < 0.002 (!) <- stabler on larger graph
+	 * 
+	 * * Mind that the above sorting algorithm are implemented, but not used in any way
+	 * other than heap sort. The reason is that the heap sort has proven to be efficient
+	 * (and quite stable) on the larger graphs.
 	 */
-
 	private static <D> void swap(ArrayList<WeightedEdge<D>> A, int i, int j) {
 		WeightedEdge<D> tmp = A.get(i);
 		A.set(i, A.get(j));
@@ -82,21 +85,21 @@ public class Sorting {
 	 * @param A the array to be sorted
 	 */
 	public static <D> void insertionsort(ArrayList<WeightedEdge<D>> A) {
-		// /* get the number of edges */
-		// int n = A.size();
-        // for (int i = 1; i < n; i++) { /* iterate through the edges */
-        //     WeightedEdge<D> key = A.get(i);
-        //     int j = i - 1;
-		// 	/* 
-		// 	 * Move elements of ArrayList A that are > than the key
-		// 	 * to the right of the current position in the array
-		// 	 */
-        //     while (j >= 0 && A.get(j).weight > key.weight) {
-        //         A.set(j + 1, A.get(j)); /* right shift */
-        //         j = j - 1;
-        //     } /* replace the key */
-        //     A.set(j + 1, key); 
-        // }
+		/* get the number of edges */
+		int n = A.size();
+        for (int i = 1; i < n; i++) { /* iterate through the edges */
+            WeightedEdge<D> key = A.get(i);
+            int j = i - 1;
+			/* 
+			 * Move elements of ArrayList A that are > than the key
+			 * to the right of the current possition in the array
+			 */
+            while (j >= 0 && A.get(j).weight > key.weight) {
+                A.set(j + 1, A.get(j)); /* right shift */
+                j = j - 1;
+            } /* replace the key */
+            A.set(j + 1, key); 
+        }
 	}
 
 	/**
@@ -139,8 +142,7 @@ public class Sorting {
 	 * <li>Average/Best-case cost: &Theta;(nlogn)
 	 * </ul>
 	 * 
-	 * @param A   the array to be sorted
-	 * @param <T> class of the object in the array
+	 * @param A   ArrayList of weighted edges to be sorted
 	 */
 	public static <D> void quicksort(ArrayList<WeightedEdge<D>> A) {
         if (A == null || A.size() == 0)
@@ -197,7 +199,7 @@ public class Sorting {
 	 * max(<code>A</code>)-min(<code>A</code>)+1
 	 * </ul>
 	 * 
-	 * @param A the array to be sorted
+	 * @param A ArrayList of weighted edges to be sorted
 	 */
 	public static <D> void countingsort(ArrayList<WeightedEdge<D>> A) {
 
@@ -213,8 +215,7 @@ public class Sorting {
 	 * <li>Best-case cost: &Theta;(n)
 	 * </ul>
 	 * 
-	 * @param A   the array to be sorted
-	 * @param <T> class of the object in the array
+	 * @param A   ArrayList of weighted edges to be sorted
 	 */
 
 	public static <D> void heapsort(ArrayList<WeightedEdge<D>> A) {
@@ -226,6 +227,15 @@ public class Sorting {
 		}
 	}
 
+	/*	Heapsort is actually the selection sort algorithm chosen to implement in Kruskal's algorithm.
+	*   It is based on the heap data structure (in binary tree form).
+		Parameters of the entry function (heapsort) were initially the array to be sorted
+		as a <T extends Comparable<T>> type, but casting the WeightedEdge<D> to Comparable<WeightedEdge<D>>
+		caused some issues in mantaining the edges weights in the sorting process.
+		Therefore, the entry function was changed to accept an ArrayList<WeightedEdge<D>> (and so all 
+		support functions), in fact simplyfing adding edges in Kruskal function (compute).
+
+	 */
 	private static <D> void heapify(ArrayList<WeightedEdge<D>> A, int n, int i) {
 		if (i >= n)
 			return;
@@ -247,9 +257,11 @@ public class Sorting {
 		if (l > c)
 			return;
 		int max = l;
-		if (r <= c && A.get(l).weight < A.get(r).weight) // the weitghts are fetched ompared here
+		if (r <= c && A.get(l).weight < A.get(r).weight)
 			max = r;
-		if (A.get(i).weight < A.get(max).weight) { // the weitghts are fetched ompared here
+		/* compareTo() and comparable type seems troublesome here
+		 * change it in favour of the weight field */
+		if (A.get(i).weight < A.get(max).weight) {
 			swap(A, i, max);
 			fixheap(A, c, max);
 		}
